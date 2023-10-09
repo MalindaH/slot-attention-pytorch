@@ -184,11 +184,11 @@ class SlotAttentionAutoEncoder(nn.Module):
         # `x` has shape: [batch_size, width*height, input_size].
 
         # Slot Attention module.
-        slots = self.slot_attention(x)
+        slots_orig = self.slot_attention(x)
         # `slots` has shape: [batch_size, num_slots, slot_size].
 
         # """Broadcast slot features to a 2D grid and collapse slot dimension.""".
-        slots = slots.reshape((-1, slots.shape[-1])).unsqueeze(1).unsqueeze(2)
+        slots = slots_orig.reshape((-1, slots_orig.shape[-1])).unsqueeze(1).unsqueeze(2)
         slots = slots.repeat((1, 8, 8, 1))
         
         # `slots` has shape: [batch_size*num_slots, width_init, height_init, slot_size].
@@ -206,4 +206,4 @@ class SlotAttentionAutoEncoder(nn.Module):
         recon_combined = recon_combined.permute(0,3,1,2)
         # `recon_combined` has shape: [batch_size, width, height, num_channels].
 
-        return recon_combined, recons, masks, slots
+        return recon_combined, recons, masks, slots_orig
